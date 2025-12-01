@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const API_BASE_URL = 'http://localhost:3000'
 
@@ -7,8 +7,8 @@ export default function HomePage() {
   const [opportunities, setOpportunities] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [user, setUser] = useState(null)
 
-  // pour le formulaire de création rapide
   const [form, setForm] = useState({
     title: '',
     organization: '',
@@ -19,6 +19,15 @@ export default function HomePage() {
   })
 
   useEffect(() => {
+    const storedUser = localStorage.getItem('authUser')
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser))
+      } catch {
+        localStorage.removeItem('authUser')
+      }
+    }
+
     async function loadOpportunities() {
       try {
         setLoading(true)
@@ -40,15 +49,20 @@ export default function HomePage() {
     loadOpportunities()
   }, [])
 
-  
-
-
   async function handleSubmit(e) {
     e.preventDefault()
+    const token = localStorage.getItem('authToken')
+    if (!token) {
+      alert("Connectez-vous en tant qu'organisateur pour créer une opportunité")
+      return
+    }
     try {
       const res = await fetch(`${API_BASE_URL}/api/opportunities`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           title: form.title,
           organization: form.organization,
@@ -66,9 +80,7 @@ export default function HomePage() {
       }
 
       const created = await res.json()
-      // on ajoute la nouvelle opportunité en tête de liste
       setOpportunities((prev) => [created, ...prev])
-      // reset du formulaire
       setForm({
         title: '',
         organization: '',
@@ -79,7 +91,7 @@ export default function HomePage() {
       })
     } catch (err) {
       console.error(err)
-      alert("Erreur réseau lors de la création")
+      alert('Erreur réseau lors de la création')
     }
   }
 
@@ -90,59 +102,56 @@ export default function HomePage() {
 
   if (loading) return <p>Chargement des opportunités...</p>
   if (error) return <p>{error}</p>
-  
+
   return (
     <div>
       <h1>Benevolapp</h1>
       <p>Découvre et crée des opportunités de bénévolat.</p>
-      {/* Formulaire simple de création */}
       <section style={{ marginBottom: '2rem' }}>
         <h2>Créer une opportunité</h2>
-        <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '0.5rem', maxWidth: 400 }}>
-          <input
-            name="title"
-            value={form.title}
-            onChange={handleChange}
-            placeholder="Titre"
-            required
-          />
-          <input
-            name="organization"
-            value={form.organization}
-            onChange={handleChange}
-            placeholder="Organisation"
-            required
-          />
-          <input
-            name="city"
-            value={form.city}
-            onChange={handleChange}
-            placeholder="Ville"
-            required
-          />
-          <input
-            name="date"
-            type="date"
-            value={form.date}
-            onChange={handleChange}
-          />
-          <input
-            name="time"
-            value={form.time}
-            onChange={handleChange}
-            placeholder="Heure (ex: 10:00 - 13:00)"
-          />
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            placeholder="Description"
-          />
-          <button type="submit">Créer</button>
-        </form>
+        {user?.role === 'organizer' ? (
+          <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '0.5rem', maxWidth: 400 }}>
+            <input
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              placeholder="Titre"
+              required
+            />
+            <input
+              name="organization"
+              value={form.organization}
+              onChange={handleChange}
+              placeholder="Organisation"
+              required
+            />
+            <input
+              name="city"
+              value={form.city}
+              onChange={handleChange}
+              placeholder="Ville"
+              required
+            />
+            <input name="date" type="date" value={form.date} onChange={handleChange} />
+            <input
+              name="time"
+              value={form.time}
+              onChange={handleChange}
+              placeholder="Heure (ex: 10:00 - 13:00)"
+            />
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              placeholder="Description"
+            />
+            <button type="submit">Créer</button>
+          </form>
+        ) : (
+          <p>Connectez-vous en tant qu’organisateur pour créer une opportunité.</p>
+        )}
       </section>
 
-      {/* Liste des opportunités */}
       <ul style={{ listStyle: 'none', padding: 0, marginTop: '1rem' }}>
         {opportunities.map((opp) => (
           <li
@@ -156,7 +165,7 @@ export default function HomePage() {
           >
             <h2 style={{ margin: 0 }}>{opp.title}</h2>
             <p style={{ margin: '0.25rem 0' }}>
-              {opp.organization} – {opp.city}
+              {opp.organization} — {opp.city}
             </p>
             <p style={{ margin: '0.25rem 0', fontSize: '0.9rem' }}>
               {opp.date} · {opp.time}
