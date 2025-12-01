@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 const API_BASE_URL = 'http://localhost:3000'
 
@@ -39,6 +39,9 @@ export default function HomePage() {
 
     loadOpportunities()
   }, [])
+
+  
+
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -87,12 +90,11 @@ export default function HomePage() {
 
   if (loading) return <p>Chargement des opportunités...</p>
   if (error) return <p>{error}</p>
-
+  
   return (
     <div>
       <h1>Benevolapp</h1>
       <p>Découvre et crée des opportunités de bénévolat.</p>
-
       {/* Formulaire simple de création */}
       <section style={{ marginBottom: '2rem' }}>
         <h2>Créer une opportunité</h2>
