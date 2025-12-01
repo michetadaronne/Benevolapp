@@ -1,7 +1,33 @@
+:root {
+  --font-title: "Outfit", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  --title-weight: 600;
+  --text-weight: 400;
+}
+
+/* Corps du site */
 body {
   margin: 0;
   background-color: #ffffff;
   color: #111827;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+
+  font-family: var(--font-body);
+  font-weight: var(--text-weight);
+  letter-spacing: 0.2px;
+}
+
+/* Pour les titres */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: var(--title-weight);
+  letter-spacing: -0.5px;
+  color: #0b6b4c; /* ton vert identitaire */
+}
+
+/* Pour les boutons */
+button, .btn {
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
