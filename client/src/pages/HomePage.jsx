@@ -12,18 +12,9 @@ const BRAND_GREEN = "#0b6b4c";
 
 // Liste des images du hero
 const HERO_IMAGES = [
-  {
-    src: hero1,
-    alt: "Personnes qui se prennent dans les bras",
-  },
-  {
-    src: hero2,
-    alt: "Diverses personnes joignant leurs mains",
-  },
-  {
-    src: hero3,
-    alt: "Personnes tenant une boîte de dons",
-  },
+  { src: hero1, alt: "Personnes qui se prennent dans les bras" },
+  { src: hero2, alt: "Diverses personnes joignant leurs mains" },
+  { src: hero3, alt: "Personnes tenant une boîte de dons" },
 ];
 
 export default function HomePage() {
@@ -31,7 +22,6 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // index de l'image actuelle du hero
   const [heroIndex, setHeroIndex] = useState(0);
 
   // Chargement des missions
@@ -51,16 +41,14 @@ export default function HomePage() {
         setLoading(false);
       }
     }
-
     load();
   }, []);
 
-  // Changement automatique de l'image toutes les 15 secondes
+  // Slideshow hero
   useEffect(() => {
     const id = setInterval(() => {
       setHeroIndex((prev) => (prev + 1) % HERO_IMAGES.length);
-    }, 5000); // 15000 ms = 15 secondes
-
+    }, 5000);
     return () => clearInterval(id);
   }, []);
 
@@ -71,7 +59,6 @@ export default function HomePage() {
       {/* NAVBAR */}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div className="container-fluid px-0">
-          {/* Logo + nom */}
           <div className="d-flex align-items-center">
             <Link
               className="navbar-brand d-flex align-items-center gap-2 ms-3"
@@ -91,12 +78,11 @@ export default function HomePage() {
               data-bs-toggle="collapse"
               data-bs-target="#navMenu"
             >
-              <span className="navbar-toggler-icon"></span>
+              <span className="navbar-toggler-icon" />
             </button>
           </div>
 
           <div className="collapse navbar-collapse" id="navMenu">
-            {/* Liens à côté du logo */}
             <ul className="navbar-nav ms-3 gap-3">
               <li className="nav-item">
                 <Link className="nav-link" to="/about">
@@ -104,7 +90,6 @@ export default function HomePage() {
                 </Link>
               </li>
               <li className="nav-item">
-                {/* ancre vers la section missions */}
                 <a className="nav-link" href="#missions">
                   Missions à pourvoir
                 </a>
@@ -116,13 +101,11 @@ export default function HomePage() {
               </li>
             </ul>
 
-            {/* Dropdown compte à droite */}
             <div className="dropdown ms-auto me-3">
               <button
                 className="btn btn-outline-light dropdown-toggle"
                 type="button"
                 data-bs-toggle="dropdown"
-                aria-expanded="false"
               >
                 Mon compte
               </button>
@@ -153,7 +136,6 @@ export default function HomePage() {
       >
         <div className="container">
           <div className="row align-items-center g-5">
-            {/* Texte à gauche */}
             <div className="col-lg-6 text-lg-start text-center">
               <span
                 className="badge rounded-pill mb-3"
@@ -161,7 +143,6 @@ export default function HomePage() {
                   backgroundColor: "#e3f3ec",
                   color: BRAND_GREEN,
                   fontWeight: 600,
-                  letterSpacing: "0.06em",
                 }}
               >
                 PLATEFORME DE BÉNÉVOLAT LOCALE
@@ -175,72 +156,87 @@ export default function HomePage() {
 
               <p className="text-muted mb-4 fs-5">
                 Benevolapp connecte les associations et les bénévoles pour
-                faciliter l&apos;engagement sur des missions concrètes.
+                faciliter l'engagement sur des missions concrètes.
               </p>
 
-              <div className="d-flex flex-wrap justify-content-lg-start justify-content-center gap-3">
-                <div className="d-flex flex-column align-items-start">
+              <div className="d-flex gap-4">
+                <div>
                   <span className="fw-bold" style={{ color: BRAND_GREEN }}>
                     +120
                   </span>
-                  <span className="text-muted small">
+                  <div className="text-muted small">
                     missions publiées cette année
-                  </span>
+                  </div>
                 </div>
-                <div className="d-flex flex-column align-items-start">
+                <div>
                   <span className="fw-bold" style={{ color: BRAND_GREEN }}>
                     40+
                   </span>
-                  <span className="text-muted small">
+                  <div className="text-muted small">
                     organisations partenaires
-                  </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Lien discret vers les missions */}
               <div className="mt-4">
-                <a
-                  href="#missions"
-                  className="text-decoration-none"
-                  style={{ color: BRAND_GREEN, fontWeight: 600 }}
-                >
+                <a href="#missions" style={{ color: BRAND_GREEN }}>
                   Voir les missions ↓
                 </a>
               </div>
             </div>
 
-            {/* Slideshow à droite */}
             <div className="col-lg-6">
-              <div className="position-relative mx-auto" style={{ maxWidth: 480 }}>
-                <div
-                  className="rounded-4 shadow-sm overflow-hidden bg-white border"
-                  style={{ borderColor: "#e5ede8" }}
-                >
-                  <img
-                    src={currentHero.src}
-                    alt={currentHero.alt}
-                    className="w-100"
-                    style={{ display: "block", objectFit: "cover" }}
-                  />
-                </div>
+              <div className="rounded-4 shadow-sm overflow-hidden border">
+                <img
+                  src={currentHero.src}
+                  alt={currentHero.alt}
+                  className="w-100"
+                  style={{ objectFit: "cover" }}
+                />
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* SECTION MISSIONS */}
+      {/* MOT DU PRÉSIDENT */}
+      <section
+        className="py-5"
+        style={{
+          backgroundColor: "#ffffff",
+          borderTop: "1px solid #e5ede8",
+          borderBottom: "1px solid #e5ede8",
+        }}
+      >
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-lg-8 text-center">
+              <h2 className="h4 fw-semibold mb-3" style={{ color: BRAND_GREEN }}>
+                Le mot du président
+              </h2>
+
+              <p className="text-muted fs-5 fst-italic">
+                « Chez Benevolapp, nous croyons que chaque engagement compte.
+                Cette plateforme est née de la volonté de rapprocher les citoyens
+                des associations locales afin de favoriser une entraide durable
+                et accessible à tous. Merci pour votre engagement. »
+              </p>
+
+              <p className="fw-semibold mb-0">Jean Dupont</p>
+              <p className="text-muted small">
+                Président de l’association Benevolapp
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* MISSIONS */}
       <main className="py-5" style={{ backgroundColor: "#f5f7f6" }}>
         <div className="container">
           <section id="missions">
-            <div className="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-2">
-              <div>
-                <h2 className="h4 fw-semibold mb-1">Missions à pourvoir</h2>
-                <p className="text-muted small mb-0">
-                  Découvre les opportunités actuellement proposées par les
-                  organisations.
-                </p>
-              </div>
+            <div className="d-flex justify-content-between mb-4">
+              <h2 className="h4 fw-semibold">Missions à pourvoir</h2>
               <span className="text-muted small">
                 {loading
                   ? "Chargement..."
@@ -248,79 +244,33 @@ export default function HomePage() {
               </span>
             </div>
 
-            {error && (
-              <div className="alert alert-danger" role="alert">
-                {error}
-              </div>
-            )}
+            {error && <div className="alert alert-danger">{error}</div>}
 
             {loading ? (
-              <div className="text-center py-5">
-                <div
-                  className="spinner-border"
-                  role="status"
-                  style={{ color: BRAND_GREEN }}
-                />
-                <p className="text-muted mb-0 mt-3">
-                  Chargement des missions en cours...
-                </p>
+              <div className="text-center">
+                <div className="spinner-border" />
               </div>
             ) : opportunities.length === 0 ? (
               <div className="alert alert-info">
-                Aucune mission n&apos;est publiée pour le moment. Revenez
-                prochainement ou créez une opportunité via votre espace
-                organisation.
+                Aucune mission n'est publiée pour le moment.
               </div>
             ) : (
               <div className="row g-4">
                 {opportunities.map((opp) => (
-                  <div className="col-md-6 col-lg-4" key={opp._id}>
-                    <div
-                      className="card h-100 border-0 shadow-sm"
-                      style={{ borderRadius: "1rem" }}
-                    >
-                      <div
-                        className="card-body d-flex flex-column"
-                        style={{ padding: "1.25rem 1.4rem" }}
-                      >
-                        <div className="d-flex justify-content-between mb-2">
-                          <span
-                            className="badge rounded-pill"
-                            style={{
-                              backgroundColor: "#e3f3ec",
-                              color: BRAND_GREEN,
-                              fontSize: "0.7rem",
-                              letterSpacing: "0.08em",
-                            }}
-                          >
-                            {opp.city || "Local"}
-                          </span>
-                          {opp.date && (
-                            <span className="text-muted small">
-                              {opp.date}
-                              {opp.time ? ` · ${opp.time}` : ""}
-                            </span>
-                          )}
-                        </div>
-
-                        <h5 className="fw-semibold mb-1">{opp.title}</h5>
-                        <p className="text-muted small mb-2">
+                  <div key={opp._id} className="col-md-6 col-lg-4">
+                    <div className="card h-100 shadow-sm border-0">
+                      <div className="card-body d-flex flex-column">
+                        <h5>{opp.title}</h5>
+                        <p className="text-muted small">
                           {opp.organization}
                         </p>
-
-                        <p className="text-muted small flex-grow-1 mb-3">
-                          {opp.description || "Aucune description fournie."}
+                        <p className="text-muted small flex-grow-1">
+                          {opp.description}
                         </p>
-
                         <Link
                           to={`/opportunity/${opp._id}`}
                           className="btn btn-sm text-white mt-auto"
-                          style={{
-                            backgroundColor: BRAND_GREEN,
-                            borderColor: BRAND_GREEN,
-                            borderRadius: "999px",
-                            paddingInline: "1.1rem",
-                          }}
+                          style={{ backgroundColor: BRAND_GREEN }}
                         >
                           Voir les détails
                         </Link>
