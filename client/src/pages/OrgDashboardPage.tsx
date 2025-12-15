@@ -382,7 +382,7 @@ export default function OrgDashboardPage() {
                       className="form-control"
                       placeholder="Nom de la mission"
                       value={form.title}
-                      onChange={(e) => handleChange(e, setForm)}
+                      onChange={handleChangeForm}
                       required
                     />
                   </div>
@@ -394,7 +394,7 @@ export default function OrgDashboardPage() {
                       className="form-control"
                       placeholder="Association organisatrice"
                       value={form.organization}
-                      onChange={(e) => handleChange(e, setForm)}
+                      onChange={handleChangeForm}
                       required
                     />
                   </div>
@@ -407,7 +407,7 @@ export default function OrgDashboardPage() {
                         className="form-control"
                         placeholder="Ville"
                         value={form.city}
-                        onChange={(e) => handleChange(e, setForm)}
+                        onChange={handleChangeForm}
                         required
                       />
                     </div>
@@ -418,7 +418,7 @@ export default function OrgDashboardPage() {
                         name="date"
                         className="form-control"
                         value={form.date}
-                        onChange={(e) => handleChange(e, setForm)}
+                        onChange={handleChangeForm}
                         required
                       />
                     </div>
@@ -431,7 +431,7 @@ export default function OrgDashboardPage() {
                         name="startTime"
                         className="form-control"
                         value={form.startTime}
-                        onChange={(e) => handleChange(e, setForm)}
+                        onChange={handleChangeForm}
                         required
                       />
                     </div>
@@ -442,7 +442,7 @@ export default function OrgDashboardPage() {
                         name="endTime"
                         className="form-control"
                         value={form.endTime}
-                        onChange={(e) => handleChange(e, setForm)}
+                        onChange={handleChangeForm}
                         required
                       />
                     </div>
@@ -455,7 +455,7 @@ export default function OrgDashboardPage() {
                       rows={3}
                       placeholder="Détails de la mission"
                       value={form.description}
-                      onChange={(e) => handleChange(e, setForm)}
+                      onChange={handleChangeForm}
                     />
                   </div>
                   <div>
@@ -466,7 +466,7 @@ export default function OrgDashboardPage() {
                       className="form-control"
                       placeholder="ex: logistique, accueil, animation"
                       value={form.categories}
-                      onChange={(e) => handleChange(e, setForm)}
+                      onChange={handleChangeForm}
                     />
                   </div>
                   <button
@@ -582,7 +582,7 @@ export default function OrgDashboardPage() {
                                   className="form-control"
                                   name="title"
                                   value={editForm.title}
-                                  onChange={(e) => handleChange(e, setEditForm)}
+                                  onChange={handleChangeEdit}
                                 />
                               </div>
                               <div className="col-md-6">
@@ -591,7 +591,7 @@ export default function OrgDashboardPage() {
                                   className="form-control"
                                   name="organization"
                                   value={editForm.organization}
-                                  onChange={(e) => handleChange(e, setEditForm)}
+                                  onChange={handleChangeEdit}
                                 />
                               </div>
                             </div>
@@ -602,7 +602,7 @@ export default function OrgDashboardPage() {
                                   className="form-control"
                                   name="city"
                                   value={editForm.city}
-                                  onChange={(e) => handleChange(e, setEditForm)}
+                                  onChange={handleChangeEdit}
                                 />
                               </div>
                               <div className="col-md-4">
@@ -612,7 +612,7 @@ export default function OrgDashboardPage() {
                                   className="form-control"
                                   name="date"
                                   value={editForm.date}
-                                  onChange={(e) => handleChange(e, setEditForm)}
+                                  onChange={handleChangeEdit}
                                 />
                               </div>
                               <div className="col-md-4">
@@ -623,14 +623,14 @@ export default function OrgDashboardPage() {
                                     className="form-control"
                                     name="startTime"
                                     value={editForm.startTime}
-                                    onChange={(e) => handleChange(e, setEditForm)}
+                                    onChange={handleChangeEdit}
                                   />
                                   <input
                                     type="time"
                                     className="form-control"
                                     name="endTime"
                                     value={editForm.endTime}
-                                    onChange={(e) => handleChange(e, setEditForm)}
+                                    onChange={handleChangeEdit}
                                   />
                                 </div>
                               </div>
@@ -642,7 +642,7 @@ export default function OrgDashboardPage() {
                                 rows={2}
                                 name="description"
                                 value={editForm.description}
-                                onChange={(e) => handleChange(e, setEditForm)}
+                                onChange={handleChangeEdit}
                               />
                             </div>
                             <div className="mt-2">
@@ -651,7 +651,7 @@ export default function OrgDashboardPage() {
                                 className="form-control"
                                 name="categories"
                                 value={editForm.categories}
-                                onChange={(e) => handleChange(e, setEditForm)}
+                                onChange={handleChangeEdit}
                               />
                             </div>
                             <div className="d-flex gap-2 mt-3">
