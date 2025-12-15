@@ -302,6 +302,72 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* FAIRE UN DON */}
+      <section
+        className="py-5"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(11,107,76,0.08) 0%, rgba(11,107,76,0.02) 100%)",
+          borderBottom: "1px solid #e5ede8",
+        }}
+      >
+        <div className="container">
+          <div className="row align-items-center g-4">
+            <div className="col-lg-7">
+              <h2 className="h4 fw-semibold mb-3" style={{ color: BRAND_GREEN }}>
+                Faire un don, c’est multiplier notre impact
+              </h2>
+
+              <p className="text-muted mb-3" style={{ textAlign: "justify" }}>
+              Vos dons financent le matériel des missions, la formation des bénévoles
+              et les accompagnements d’urgence pour les associations locales.
+              Chaque euro est utilisé pour rendre l’entraide plus rapide et plus
+              proche des besoins du terrain.
+            </p>
+
+            <p className="text-muted mb-0" style={{ textAlign: "justify" }}>
+              Les dons sont défiscalisés : jusqu’à 66 % de réduction d’impôt pour les
+              particuliers et 60 % pour les entreprises, dans la limite prévue par la loi.
+              Un don de 50 € ne vous coûte donc que 17 € après déduction.
+            </p>
+
+            </div>
+
+            <div className="col-lg-5">
+              <div className="card border-0 shadow-sm">
+                <div className="card-body">
+                  <h3 className="h6 fw-semibold mb-2">Envie de soutenir ?</h3>
+
+                  <p className="text-muted small mb-3">
+                    Un don régulier nous permet de planifier nos actions,
+                    un don ponctuel nous aide à répondre aux urgences.
+                    Merci pour votre soutien !
+                  </p>
+
+                  <div className="d-flex flex-wrap gap-2">
+                    <Link
+                      to="/don"
+                      className="btn text-white"
+                      style={{ backgroundColor: BRAND_GREEN }}
+                    >
+                      Faire un don
+                    </Link>
+
+                    <a
+                      className="btn btn-outline-success"
+                      href="mailto:contact@benevolapp.org?subject=Question%20sur%20les%20dons"
+                    >
+                      Poser une question
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
       {/* MISSIONS */}
       <main className="py-5" style={{ backgroundColor: "#f5f7f6" }}>
         <div className="container">
