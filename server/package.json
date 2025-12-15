@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "nodemon index.js",
+    "dev": "nodemon --watch . --ext ts --exec \"tsx index.ts\"",
+    "build": "tsc",
+    "start": "node dist/index.js",
     "test": "vitest"
   },
   "dependencies": {
@@ -16,8 +18,17 @@
     "mongoose": "^9.0.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^22.10.1",
+    "@types/supertest": "^2.0.16",
     "nodemon": "^3.1.0",
     "supertest": "^7.1.4",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.7.3",
     "vitest": "^4.0.13"
   }
 }

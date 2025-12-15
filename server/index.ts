@@ -1,7 +1,7 @@
 import app from "./app.js";
 import { connectToDb } from "./db/mongo.js";
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 async function start() {
   try {

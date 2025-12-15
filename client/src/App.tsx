@@ -1,12 +1,12 @@
 import { Routes, Route } from 'react-router-dom'
-import HomePage from './pages/HomePage.jsx'
-import OpportunityPage from './pages/OpportunityPage.jsx'
-import LoginPage from "./pages/LoginPage.jsx";
-import RegisterPage from "./pages/RegisterPage.jsx";
-import ProfilePage from './pages/ProfilePage.jsx'
-import OrgDashboardPage from './pages/OrgDashboardPage.jsx'
-import ContactPage from "./pages/ContactPage.jsx"
-import AboutPage from './pages/AboutPage.jsx';
+import HomePage from './pages/HomePage'
+import OpportunityPage from './pages/OpportunityPage'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import ProfilePage from './pages/ProfilePage'
+import OrgDashboardPage from './pages/OrgDashboardPage'
+import ContactPage from './pages/ContactPage'
+import AboutPage from './pages/AboutPage'
 
 
 

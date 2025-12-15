@@ -1,14 +1,15 @@
 import { useParams, Link } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
+import type { Opportunity, User } from '../types'
 
 const API_BASE_URL = 'http://localhost:3000'
 
 export default function OpportunityPage() {
-  const { id } = useParams()
-  const [opportunity, setOpportunity] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [user, setUser] = useState(null)
+  const { id } = useParams<{ id: string }>()
+  const [opportunity, setOpportunity] = useState<Opportunity | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [joining, setJoining] = useState(false)
 
   useEffect(() => {
@@ -28,6 +29,12 @@ export default function OpportunityPage() {
         setLoading(true)
         setError(null)
 
+        if (!id) {
+          setError('Identifiant de mission manquant')
+          setLoading(false)
+          return
+        }
+
         const res = await fetch(`${API_BASE_URL}/api/opportunities/${id}`)
         if (res.status === 404) {
           setError('Opportunité introuvable')
@@ -36,7 +43,7 @@ export default function OpportunityPage() {
         }
         if (!res.ok) throw new Error('Erreur réseau')
 
-        const data = await res.json()
+        const data = (await res.json()) as Opportunity
         setOpportunity(data)
       } catch (err) {
         console.error(err)
@@ -117,6 +124,8 @@ export default function OpportunityPage() {
   const isOrganizer = user?.role === 'organizer'
   const canSeeVolunteers =
     isOrganizer && opportunity.createdBy && user?._id && `${opportunity.createdBy}` === `${user._id}`
+  const startTime = opportunity.startTime || opportunity.time || '--'
+  const endTime = opportunity.endTime || opportunity.time || '--'
 
   return (
     <div>
@@ -129,8 +138,14 @@ export default function OpportunityPage() {
         <strong>Lieu :</strong> {opportunity.city}
       </p>
       <p>
-        <strong>Date :</strong> {opportunity.date} · {opportunity.time}
+        <strong>Date :</strong> {opportunity.date} de {startTime} a {endTime}
       </p>
+      {opportunity.categories && opportunity.categories.length > 0 && (
+        <p>
+          <strong>Categories :</strong> {opportunity.categories.join(', ')}
+        </p>
+      )}
+
       <h2>Description</h2>
       <p>{opportunity.description}</p>
 

@@ -1,7 +1,24 @@
 import Opportunity from "../models/Opportunity.js";
 
-export async function getAllOpportunities() {
-  const docs = await Opportunity.find().lean();
+type OpportunityFilters = {
+  city?: string;
+  date?: string;
+  category?: string;
+};
+
+export async function getAllOpportunities(filters: OpportunityFilters = {}) {
+  const query: Record<string, unknown> = {};
+  if (filters.city) {
+    query.city = filters.city;
+  }
+  if (filters.date) {
+    query.date = filters.date;
+  }
+  if (filters.category) {
+    query.categories = filters.category;
+  }
+
+  const docs = await Opportunity.find(query).lean();
   return docs.map((doc) => ({
     ...doc,
     volunteerCount: doc.volunteers ? doc.volunteers.length : 0,
@@ -33,8 +50,8 @@ export async function getOpportunityByIdForOrganizer(id, organizerId) {
   };
 }
 
-export async function createOpportunity(data) {
-  const doc = await Opportunity.create(data);
+export async function createOpportunity(data: Record<string, unknown>) {
+  const doc = (await Opportunity.create(data as any)) as any;
   return doc.toObject();
 }
 
@@ -82,5 +99,14 @@ export async function getOpportunitiesByCreator(creatorId) {
   return docs.map((doc) => ({
     ...doc,
     volunteerCount: doc.volunteers ? doc.volunteers.length : 0,
+  }));
+}
+
+export async function getOpportunitiesJoinedByUser(userId) {
+  const docs = await Opportunity.find({ volunteers: userId }).lean();
+  return docs.map((doc) => ({
+    ...doc,
+    volunteerCount: doc.volunteers ? doc.volunteers.length : 0,
+    volunteers: undefined,
   }));
 }

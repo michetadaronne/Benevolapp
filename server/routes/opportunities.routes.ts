@@ -9,6 +9,7 @@ import {
   joinOpportunity,
   leaveOpportunity,
   getOpportunitiesByCreator,
+  getOpportunitiesJoinedByUser,
 } from "../repositories/opportunity.repository.js";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 import jwt from "jsonwebtoken";
@@ -19,8 +20,38 @@ const { JWT_SECRET = "dev-secret" } = process.env;
 // GET /api/opportunities
 router.get("/", async (req, res, next) => {
   try {
-    const opportunities = await getAllOpportunities();
+    const { city, date, category } = req.query;
+    const opportunities = await getAllOpportunities({
+      city: typeof city === "string" ? city : undefined,
+      date: typeof date === "string" ? date : undefined,
+      category: typeof category === "string" ? category : undefined,
+    });
     res.status(200).json(opportunities);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/opportunities/mine
+router.get(
+  "/mine",
+  requireAuth,
+  requireRole("organizer"),
+  async (req, res, next) => {
+    try {
+      const opportunities = await getOpportunitiesByCreator(req.user._id);
+      res.json(opportunities);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// GET /api/opportunities/joined
+router.get("/joined", requireAuth, async (req, res, next) => {
+  try {
+    const opportunities = await getOpportunitiesJoinedByUser(req.user._id);
+    res.json(opportunities);
   } catch (err) {
     next(err);
   }
@@ -34,8 +65,10 @@ router.get("/:id", async (req, res, next) => {
     if (authHeader && authHeader.startsWith("Bearer ")) {
       const token = authHeader.slice(7);
       try {
-        const payload = jwt.verify(token, JWT_SECRET);
-        requester = { id: payload.sub, role: payload.role };
+        const payload = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload | string;
+        if (typeof payload !== "string") {
+          requester = { id: String(payload.sub), role: (payload as any).role };
+        }
       } catch {
         requester = null;
       }
@@ -60,21 +93,6 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-// GET /api/opportunities/mine
-router.get(
-  "/mine",
-  requireAuth,
-  requireRole("organizer"),
-  async (req, res, next) => {
-    try {
-      const opportunities = await getOpportunitiesByCreator(req.user._id);
-      res.json(opportunities);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
 // POST /api/opportunities
 router.post(
   "/",
@@ -82,11 +100,21 @@ router.post(
   requireRole("organizer"),
   async (req, res, next) => {
     try {
-      const { title, organization, city, date, time, description } = req.body;
+      const {
+        title,
+        organization,
+        city,
+        date,
+        startTime,
+        endTime,
+        description,
+        categories = [],
+      } = req.body;
 
-      if (!title || !organization || !city) {
+      if (!title || !organization || !city || !date || !startTime || !endTime) {
         return res.status(400).json({
-          error: "Missing required fields (title, organization, city)",
+          error:
+            "Missing required fields (title, organization, city, date, startTime, endTime)",
         });
       }
 
@@ -94,9 +122,15 @@ router.post(
         title,
         organization,
         city,
-        date: date || null,
-        time: time || null,
+        date,
+        startTime,
+        endTime,
         description: description || "",
+        categories: Array.isArray(categories)
+          ? categories
+          : typeof categories === "string" && categories.length > 0
+          ? [categories]
+          : [],
         createdBy: req.user?._id,
       });
 

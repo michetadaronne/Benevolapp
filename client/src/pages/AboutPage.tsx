@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logoImage from "../assets/unnamed.jpg";
 
@@ -42,6 +43,19 @@ const photos = [
 ];
 
 export default function AboutPage() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("authUser");
+    if (stored) {
+      try {
+        setUser(JSON.parse(stored));
+      } catch {
+        localStorage.removeItem("authUser");
+      }
+    }
+  }, []);
+
   return (
     <div className="bg-light min-vh-100">
       {/* NAVBAR – même que sur la home */}
@@ -96,19 +110,66 @@ export default function AboutPage() {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                Mon compte
+                {user ? user.email : "Mon compte"}
               </button>
               <ul className="dropdown-menu dropdown-menu-end">
-                <li>
-                  <Link className="dropdown-item" to="/login">
-                    Se connecter
-                  </Link>
-                </li>
-                <li>
-                  <Link className="dropdown-item" to="/register">
-                    Créer un compte
-                  </Link>
-                </li>
+                {user ? (
+                  <>
+                    <li>
+                      <span className="dropdown-item-text text-muted">
+                        {user.role === "organizer" ? "Organisateur" : "Volontaire"}
+                      </span>
+                    </li>
+                    {user.role === "organizer" && (
+                      <>
+                        <li>
+                          <Link className="dropdown-item" to="/org">
+                            Tableau organisateur
+                          </Link>
+                        </li>
+                        <li>
+                          <Link className="dropdown-item" to="/org#create">
+                            Créer une mission
+                          </Link>
+                        </li>
+                        <li>
+                          <hr className="dropdown-divider" />
+                        </li>
+                      </>
+                    )}
+                    <li>
+                      <Link className="dropdown-item" to="/profile">
+                        Profil
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        className="dropdown-item"
+                        type="button"
+                        onClick={() => {
+                          localStorage.removeItem("authToken");
+                          localStorage.removeItem("authUser");
+                          setUser(null);
+                        }}
+                      >
+                        Se déconnecter
+                      </button>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <Link className="dropdown-item" to="/login">
+                        Se connecter
+                      </Link>
+                    </li>
+                    <li>
+                      <Link className="dropdown-item" to="/register">
+                        Créer un compte
+                      </Link>
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
           </div>

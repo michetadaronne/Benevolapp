@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logoImage from "../assets/unnamed.jpg";
 
@@ -6,6 +6,18 @@ const BRAND_GREEN = "#0b6b4c";
 
 export default function ContactPage() {
   const [status, setStatus] = useState("");
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("authUser");
+    if (stored) {
+      try {
+        setUser(JSON.parse(stored));
+      } catch {
+        localStorage.removeItem("authUser");
+      }
+    }
+  }, []);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -66,19 +78,66 @@ export default function ContactPage() {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                Mon compte
+                {user ? user.email : "Mon compte"}
               </button>
               <ul className="dropdown-menu dropdown-menu-end">
-                <li>
-                  <Link className="dropdown-item" to="/login">
-                    Se connecter
-                  </Link>
-                </li>
-                <li>
-                  <Link className="dropdown-item" to="/register">
-                    Créer un compte
-                  </Link>
-                </li>
+                {user ? (
+                  <>
+                    <li>
+                      <span className="dropdown-item-text text-muted">
+                        {user.role === "organizer" ? "Organisateur" : "Volontaire"}
+                      </span>
+                    </li>
+                    {user.role === "organizer" && (
+                      <>
+                        <li>
+                          <Link className="dropdown-item" to="/org">
+                            Tableau organisateur
+                          </Link>
+                        </li>
+                        <li>
+                          <Link className="dropdown-item" to="/org#create">
+                            Créer une mission
+                          </Link>
+                        </li>
+                        <li>
+                          <hr className="dropdown-divider" />
+                        </li>
+                      </>
+                    )}
+                    <li>
+                      <Link className="dropdown-item" to="/profile">
+                        Profil
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        className="dropdown-item"
+                        type="button"
+                        onClick={() => {
+                          localStorage.removeItem("authToken");
+                          localStorage.removeItem("authUser");
+                          setUser(null);
+                        }}
+                      >
+                        Se déconnecter
+                      </button>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <Link className="dropdown-item" to="/login">
+                        Se connecter
+                      </Link>
+                    </li>
+                    <li>
+                      <Link className="dropdown-item" to="/register">
+                        Créer un compte
+                      </Link>
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
           </div>
@@ -143,7 +202,7 @@ export default function ContactPage() {
                       </label>
                       <textarea
                         className="form-control"
-                        rows="4"
+                        rows={4}
                         placeholder="Expliquez-nous en quelques lignes comment nous pouvons vous aider."
                         required
                       />

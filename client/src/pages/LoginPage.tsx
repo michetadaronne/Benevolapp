@@ -1,51 +1,53 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import type { ChangeEvent, FormEvent } from "react";
 import logoImage from "../assets/unnamed.jpg";
+import type { User } from "../types";
 
 const API_BASE_URL = "http://localhost:3000";
 const BRAND_GREEN = "#0b6b4c";
-const CARD_WIDTH = 440; // un tout petit peu plus étroit
+const CARD_WIDTH = 460;
 
-export default function RegisterPage() {
+export default function LoginPage() {
   const [form, setForm] = useState({
-    name: "",
-    role: "volunteer",
     email: "",
     password: "",
   });
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState<string>("");
 
-  function handleChange(e) {
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("");
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
+      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: form.name,
-          role: form.role,
           email: form.email,
           password: form.password,
         }),
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as {
+        token?: string;
+        user?: User;
+        error?: string;
+      };
 
       if (!res.ok) {
-        setStatus(data.error || "Erreur lors de l'inscription");
+        setStatus(data.error || "Erreur de connexion");
         return;
       }
 
       localStorage.setItem("authToken", data.token);
       localStorage.setItem("authUser", JSON.stringify(data.user));
-      setStatus(`Compte créé pour ${data.user.email}`);
+      setStatus(`Connecté en tant que ${data.user.email}`);
     } catch (err) {
       console.error(err);
       setStatus("Erreur réseau");
@@ -65,68 +67,34 @@ export default function RegisterPage() {
         className="card shadow-sm border-0"
         style={{ maxWidth: CARD_WIDTH, width: "100%" }}
       >
-        <div className="card-body p-4">
+        <div className="card-body p-4 p-md-5">
           {/* Logo + titre */}
-          <div className="text-center mb-3">
+          <div className="text-center mb-4">
             <img
               src={logoImage}
               alt="Benevolapp"
-              style={{ height: "52px", borderRadius: "8px" }}
+              style={{ height: "56px", borderRadius: "8px" }}
             />
-            <h1 className="h4 fw-semibold mt-3 mb-1">Bienvenue</h1>
-            <p className="text-muted mb-0 small">
-              Créez votre compte Benevolapp pour commencer.
+            <h1 className="h3 fw-semibold mt-3 mb-1">Bienvenue</h1>
+            <p className="text-muted mb-0">
+              Accédez à votre espace bénévole ou organisation.
             </p>
           </div>
 
           {/* Boutons Connexion / Inscription */}
-          <div className="d-flex justify-content-center mb-3 gap-2">
-            <Link to="/login" className="btn btn-sm btn-outline-success">
+          <div className="d-flex justify-content-center mb-4 gap-2">
+            <button className="btn btn-success" type="button" disabled>
               Connexion
-            </Link>
-            <button
-              className="btn btn-sm btn-success"
-              type="button"
-              disabled
-            >
-              Inscription
             </button>
+            <Link to="/register" className="btn btn-outline-success">
+              Inscription
+            </Link>
           </div>
 
-          {/* Formulaire d'inscription */}
-          <form className="d-grid gap-2" onSubmit={handleSubmit}>
+          {/* Formulaire de connexion */}
+          <form className="d-grid gap-3" onSubmit={handleSubmit}>
             <div>
-              <label className="form-label fw-semibold small text-uppercase mb-1">
-                Nom
-              </label>
-              <input
-                type="text"
-                name="name"
-                className="form-control form-control-lg"
-                placeholder="Votre nom"
-                value={form.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="form-label fw-semibold small text-uppercase mb-1">
-                Rôle
-              </label>
-              <select
-                name="role"
-                className="form-select form-select-lg"
-                value={form.role}
-                onChange={handleChange}
-              >
-                <option value="volunteer">Volontaire</option>
-                <option value="organizer">Organisateur</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="form-label fw-semibold small text-uppercase mb-1">
+              <label className="form-label fw-semibold small text-uppercase">
                 Email
               </label>
               <input
@@ -141,7 +109,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="form-label fw-semibold small text-uppercase mb-1">
+              <label className="form-label fw-semibold small text-uppercase">
                 Mot de passe
               </label>
               <input
@@ -160,12 +128,12 @@ export default function RegisterPage() {
               type="submit"
               style={{ backgroundColor: BRAND_GREEN, borderColor: BRAND_GREEN }}
             >
-              Créer un compte
+              Se connecter
             </button>
           </form>
 
           {status && (
-            <p className="text-center text-muted mt-3 mb-0 small">{status}</p>
+            <p className="text-center text-muted mt-3 mb-0">{status}</p>
           )}
         </div>
       </div>

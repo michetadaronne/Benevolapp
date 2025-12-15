@@ -1,9 +1,19 @@
+import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
 const { JWT_SECRET = "dev-secret" } = process.env;
 
-export async function requireAuth(req, res, next) {
+type JwtPayload = {
+  sub: string;
+  role: string;
+};
+
+export async function requireAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const authHeader = req.headers.authorization || "";
   const token = authHeader.startsWith("Bearer ")
     ? authHeader.slice(7)
@@ -14,7 +24,7 @@ export async function requireAuth(req, res, next) {
   }
 
   try {
-    const payload = jwt.verify(token, JWT_SECRET);
+    const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
     const user = await User.findById(payload.sub).lean();
     if (!user) {
       return res.status(401).json({ error: "Unauthorized" });
@@ -27,8 +37,12 @@ export async function requireAuth(req, res, next) {
   }
 }
 
-export function requireRole(role) {
-  return function roleMiddleware(req, res, next) {
+export function requireRole(role: string) {
+  return function roleMiddleware(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     if (!req.user || req.user.role !== role) {
       return res.status(403).json({ error: "Forbidden" });
     }

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import logoImage from "../assets/unnamed.jpg";
+import type { Opportunity, User } from "../types";
 
 // Images du hero (slideshow)
 import hero1 from "../assets/personnes-a-plan-moyen-s-embrassant.jpg";
@@ -18,21 +19,33 @@ const HERO_IMAGES = [
 ];
 
 export default function HomePage() {
-  const [opportunities, setOpportunities] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [filters, setFilters] = useState({
+    city: "",
+    date: "",
+    category: "",
+  });
 
   const [heroIndex, setHeroIndex] = useState(0);
 
-  // Chargement des missions
+  // Chargement des missions avec filtres
   useEffect(() => {
     async function load() {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(`${API_BASE_URL}/api/opportunities`);
-        if (!res.ok) throw new Error("Erreur réseau");
-        const data = await res.json();
+        const params = new URLSearchParams();
+        if (filters.city) params.set("city", filters.city);
+        if (filters.date) params.set("date", filters.date);
+        if (filters.category) params.set("category", filters.category);
+        const res = await fetch(
+          `${API_BASE_URL}/api/opportunities${params.toString() ? `?${params}` : ""}`
+        );
+        if (!res.ok) throw new Error("Erreur reseau");
+        const data = (await res.json()) as Opportunity[];
         setOpportunities(data);
       } catch (err) {
         console.error(err);
@@ -42,6 +55,17 @@ export default function HomePage() {
       }
     }
     load();
+  }, [filters]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("authUser");
+    if (stored) {
+      try {
+        setUser(JSON.parse(stored));
+      } catch {
+        localStorage.removeItem("authUser");
+      }
+    }
   }, []);
 
   // Slideshow hero
@@ -107,19 +131,66 @@ export default function HomePage() {
                 type="button"
                 data-bs-toggle="dropdown"
               >
-                Mon compte
+                {user ? user.email : "Mon compte"}
               </button>
               <ul className="dropdown-menu dropdown-menu-end">
-                <li>
-                  <Link className="dropdown-item" to="/login">
-                    Se connecter
-                  </Link>
-                </li>
-                <li>
-                  <Link className="dropdown-item" to="/register">
-                    Créer un compte
-                  </Link>
-                </li>
+                {user ? (
+                  <>
+                    <li>
+                      <span className="dropdown-item-text text-muted">
+                        {user.role === "organizer" ? "Organisateur" : "Volontaire"}
+                      </span>
+                    </li>
+                    {user.role === "organizer" && (
+                      <>
+                        <li>
+                          <Link className="dropdown-item" to="/org">
+                            Tableau organisateur
+                          </Link>
+                        </li>
+                        <li>
+                          <Link className="dropdown-item" to="/org#create">
+                            Créer une mission
+                          </Link>
+                        </li>
+                        <li>
+                          <hr className="dropdown-divider" />
+                        </li>
+                      </>
+                    )}
+                    <li>
+                      <Link className="dropdown-item" to="/profile">
+                        Profil
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        className="dropdown-item"
+                        type="button"
+                        onClick={() => {
+                          localStorage.removeItem("authToken")
+                          localStorage.removeItem("authUser")
+                          setUser(null)
+                        }}
+                      >
+                        Se déconnecter
+                      </button>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <Link className="dropdown-item" to="/login">
+                        Se connecter
+                      </Link>
+                    </li>
+                    <li>
+                      <Link className="dropdown-item" to="/register">
+                        Créer un compte
+                      </Link>
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
           </div>
@@ -235,13 +306,55 @@ export default function HomePage() {
       <main className="py-5" style={{ backgroundColor: "#f5f7f6" }}>
         <div className="container">
           <section id="missions">
-            <div className="d-flex justify-content-between mb-4">
-              <h2 className="h4 fw-semibold">Missions à pourvoir</h2>
+            <div className="d-flex justify-content-between mb-3 align-items-center flex-wrap gap-3">
+              <h2 className="h4 fw-semibold mb-0">Missions à pourvoir</h2>
               <span className="text-muted small">
                 {loading
                   ? "Chargement..."
                   : `${opportunities.length} mission(s) disponible(s)`}
               </span>
+            </div>
+
+            <div className="card border-0 shadow-sm mb-4">
+              <div className="card-body">
+                <div className="row g-3">
+                  <div className="col-md-4">
+                    <label className="form-label small fw-semibold">Ville</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Filtrer par ville"
+                      value={filters.city}
+                      onChange={(e) =>
+                        setFilters((prev) => ({ ...prev, city: e.target.value }))
+                      }
+                    />
+                  </div>
+                  <div className="col-md-4">
+                    <label className="form-label small fw-semibold">Date</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={filters.date}
+                      onChange={(e) =>
+                        setFilters((prev) => ({ ...prev, date: e.target.value }))
+                      }
+                    />
+                  </div>
+                  <div className="col-md-4">
+                    <label className="form-label small fw-semibold">Catégorie</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="ex: logistique"
+                      value={filters.category}
+                      onChange={(e) =>
+                        setFilters((prev) => ({ ...prev, category: e.target.value }))
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             {error && <div className="alert alert-danger">{error}</div>}
@@ -264,6 +377,17 @@ export default function HomePage() {
                         <p className="text-muted small">
                           {opp.organization}
                         </p>
+                        <p className="text-muted small mb-1">
+                          {opp.city} - {opp.date || "Date a venir"} |{" "}
+                          {(opp.startTime || opp.time || "--") +
+                            " - " +
+                            (opp.endTime || opp.time || "--")}
+                        </p>
+                        {opp.categories && opp.categories.length > 0 && (
+                          <p className="text-muted small mb-1">
+                            Catégories: {opp.categories.join(", ")}
+                          </p>
+                        )}
                         <p className="text-muted small flex-grow-1">
                           {opp.description}
                         </p>
