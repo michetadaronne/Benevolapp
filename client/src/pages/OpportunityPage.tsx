@@ -1,10 +1,11 @@
-import { useParams, Link } from "react-router-dom";
+﻿import { useParams, Link } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import type { Opportunity, User } from "../types";
 
 const API_BASE_URL = "http://localhost:3000";
 const BRAND_GREEN = "#0b6b4c";
-const HEADER_GRADIENT = "linear-gradient(135deg, #f4f7f5 0%, #ffffff 35%, #f7faf9 100%)";
+const HEADER_GRADIENT =
+  "linear-gradient(135deg, #f4f7f5 0%, #ffffff 35%, #f7faf9 100%)";
 
 export default function OpportunityPage() {
   const { id } = useParams<{ id: string }>();
@@ -37,7 +38,10 @@ export default function OpportunityPage() {
           return;
         }
 
-        const res = await fetch(`${API_BASE_URL}/api/opportunities/${id}`);
+        const token = localStorage.getItem("authToken");
+        const res = await fetch(`${API_BASE_URL}/api/opportunities/${id}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        });
         if (res.status === 404) {
           setError("Opportunité introuvable");
           setOpportunity(null);
@@ -59,11 +63,13 @@ export default function OpportunityPage() {
   }, [id]);
 
   const isJoined = useMemo(() => {
+    if (typeof opportunity?.isJoined === "boolean") return opportunity.isJoined;
     if (!opportunity || !user?._id || !opportunity.volunteers) return false;
     return opportunity.volunteers.some((v) => v._id === user._id);
   }, [opportunity, user]);
 
   async function handleJoin() {
+    if (!id) return;
     if (!user) {
       alert("Connectez-vous pour rejoindre.");
       return;
@@ -118,7 +124,7 @@ export default function OpportunityPage() {
           <div className="card-body text-center p-4">
             <p className="text-danger fw-semibold mb-2">{error}</p>
             <Link to="/" className="text-decoration-none">
-              ← Retour aux missions
+              &lt; Retour aux missions
             </Link>
           </div>
         </div>
@@ -133,7 +139,7 @@ export default function OpportunityPage() {
           <div className="card-body text-center p-4">
             <p className="fw-semibold mb-2">Opportunité introuvable.</p>
             <Link to="/" className="text-decoration-none">
-              ← Retour aux missions
+              &lt; Retour aux missions
             </Link>
           </div>
         </div>
@@ -162,7 +168,7 @@ export default function OpportunityPage() {
             to="/"
             className="text-muted text-decoration-none d-inline-flex align-items-center gap-1"
           >
-            <span aria-hidden>←</span>
+            <span aria-hidden>&lt;</span>
             <span>Retour aux missions</span>
           </Link>
           <span className="badge rounded-pill text-bg-light border">Mission solidaire</span>
@@ -184,10 +190,14 @@ export default function OpportunityPage() {
               <p className="text-muted mb-3">{opportunity.organization}</p>
 
               <div className="d-flex flex-wrap gap-2">
-                <span className="badge text-dark bg-white border">📍 {opportunity.city}</span>
-                <span className="badge text-dark bg-white border">📅 {opportunity.date}</span>
                 <span className="badge text-dark bg-white border">
-                  ⏰ {startTime} - {endTime}
+                  Ville : {opportunity.city}
+                </span>
+                <span className="badge text-dark bg-white border">
+                  Date : {opportunity.date}
+                </span>
+                <span className="badge text-dark bg-white border">
+                  Horaires : {startTime} - {endTime}
                 </span>
               </div>
 
@@ -237,7 +247,7 @@ export default function OpportunityPage() {
                     className="badge rounded-pill"
                     style={{ backgroundColor: "#eaf8f1", color: BRAND_GREEN }}
                   >
-                    Vous êtes inscrit·e
+                    Vous êtes inscrit(e)
                   </span>
                 </div>
               )}
@@ -267,7 +277,7 @@ export default function OpportunityPage() {
                     <div className="p-3 border rounded-3 bg-white h-100">
                       <p className="fw-semibold mb-1">Quand ?</p>
                       <p className="text-muted mb-0">
-                        {opportunity.date} — {startTime} à {endTime}
+                        {opportunity.date} - {startTime} à {endTime}
                       </p>
                     </div>
                   </div>
@@ -319,7 +329,9 @@ export default function OpportunityPage() {
                     >
                       2
                     </span>
-                    <span>Arrive 10 minutes en avance pour te présenter à l'équipe.</span>
+                    <span>
+                      Arrive 10 minutes en avance pour te présenter à l'équipe.
+                    </span>
                   </li>
                   <li className="d-flex align-items-start gap-2">
                     <span
@@ -328,7 +340,10 @@ export default function OpportunityPage() {
                     >
                       3
                     </span>
-                    <span>Prévoyez une tenue adaptée (chaussures fermées, vêtement confortable).</span>
+                    <span>
+                      Prévoyez une tenue adaptée (chaussures fermées, vêtement
+                      confortable).
+                    </span>
                   </li>
                 </ul>
               </div>

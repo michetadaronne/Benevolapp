@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+﻿import { Routes, Route } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import OpportunityPage from './pages/OpportunityPage'
 import LoginPage from './pages/LoginPage'
@@ -7,8 +7,6 @@ import ProfilePage from './pages/ProfilePage'
 import OrgDashboardPage from './pages/OrgDashboardPage'
 import ContactPage from './pages/ContactPage'
 import AboutPage from './pages/AboutPage'
-
-
 
 function App() {
   return (
@@ -20,7 +18,6 @@ function App() {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/org" element={<OrgDashboardPage />} />
       <Route path="/about" element={<AboutPage />} />
-      <Route path="/missions" element={<h1>Missions à pourvoir</h1>} /> 
       <Route path="/contact" element={<ContactPage />} />
     </Routes>
   )

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+﻿import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import type { ChangeEvent, FormEvent } from "react";
 import logoImage from "../assets/unnamed.jpg";
 import type { User } from "../types";
@@ -14,6 +14,7 @@ export default function LoginPage() {
     password: "",
   });
   const [status, setStatus] = useState<string>("");
+  const navigate = useNavigate();
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -47,7 +48,7 @@ export default function LoginPage() {
 
       localStorage.setItem("authToken", data.token);
       localStorage.setItem("authUser", JSON.stringify(data.user));
-      setStatus(`Connecté en tant que ${data.user.email}`);
+      navigate("/", { replace: true });
     } catch (err) {
       console.error(err);
       setStatus("Erreur réseau");
@@ -59,7 +60,7 @@ export default function LoginPage() {
       {/* Bouton retour */}
       <div className="position-absolute top-0 start-0 p-3">
         <Link to="/" className="text-muted small text-decoration-none">
-          ← Retour à l&apos;accueil
+          &lt; Retour à l&apos;accueil
         </Link>
       </div>
 
@@ -116,7 +117,7 @@ export default function LoginPage() {
                 type="password"
                 name="password"
                 className="form-control form-control-lg"
-                placeholder="••••••••"
+                placeholder="********"
                 value={form.password}
                 onChange={handleChange}
                 required

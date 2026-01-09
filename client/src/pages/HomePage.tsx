@@ -1,14 +1,15 @@
-import { Link } from "react-router-dom";
+﻿import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import logoImage from "../assets/unnamed.jpg";
 import type { Opportunity, User } from "../types";
+//split homepage en deux pour separere les opportunites
 
 // Images du hero (slideshow)
 import hero1 from "../assets/personnes-a-plan-moyen-s-embrassant.jpg";
 import hero2 from "../assets/gros-plan-de-diverses-personnes-joignant-leurs-mains.jpg";
 import hero3 from "../assets/gros-plan-des-personnes-tenant-une-boite.jpg";
 
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = "http://localhost:3000"; //ne pas mettre le port ici
 const BRAND_GREEN = "#0b6b4c";
 
 // Liste des images du hero
@@ -30,6 +31,7 @@ export default function HomePage() {
   });
 
   const [heroIndex, setHeroIndex] = useState(0);
+  const location = useLocation();
 
   // Chargement des missions avec filtres
   useEffect(() => {
@@ -42,7 +44,7 @@ export default function HomePage() {
         if (filters.date) params.set("date", filters.date);
         if (filters.category) params.set("category", filters.category);
         const res = await fetch(
-          `${API_BASE_URL}/api/opportunities${params.toString() ? `?${params}` : ""}`
+          `${API_BASE_URL}/api/opportunities${params.toString() ? `?${params}` : ""}` // /api + config vite
         );
         if (!res.ok) throw new Error("Erreur reseau");
         const data = (await res.json()) as Opportunity[];
@@ -67,6 +69,14 @@ export default function HomePage() {
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (location.hash !== "#missions") return;
+    const target = document.getElementById("missions");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [location.hash]);
 
   // Slideshow hero
   useEffect(() => {
@@ -114,10 +124,17 @@ export default function HomePage() {
                 </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#missions">
+                <Link className="nav-link" to="/#missions">
                   Missions à pourvoir
-                </a>
+                </Link>
               </li>
+              {user?.role === "organizer" && (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/org">
+                    Tableau organisateur
+                  </Link>
+                </li>
+              )}
               <li className="nav-item">
                 <Link className="nav-link" to="/contact">
                   Contact
@@ -125,39 +142,18 @@ export default function HomePage() {
               </li>
             </ul>
 
-            <div className="dropdown ms-auto me-3">
-              <button
-                className="btn btn-outline-light dropdown-toggle"
-                type="button"
-                data-bs-toggle="dropdown"
-              >
-                {user ? user.email : "Mon compte"}
-              </button>
-              <ul className="dropdown-menu dropdown-menu-end">
-                {user ? (
-                  <>
-                    <li>
-                      <span className="dropdown-item-text text-muted">
-                        {user.role === "organizer" ? "Organisateur" : "Volontaire"}
-                      </span>
-                    </li>
-                    {user.role === "organizer" && (
-                      <>
-                        <li>
-                          <Link className="dropdown-item" to="/org">
-                            Tableau organisateur
-                          </Link>
-                        </li>
-                        <li>
-                          <Link className="dropdown-item" to="/org#create">
-                            Créer une mission
-                          </Link>
-                        </li>
-                        <li>
-                          <hr className="dropdown-divider" />
-                        </li>
-                      </>
-                    )}
+            <div className="ms-auto d-flex align-items-center gap-2 me-3">
+              {user ? (
+                <div className="dropdown">
+                  <button
+                    className="btn btn-outline-light dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {user.email}
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end">
                     <li>
                       <Link className="dropdown-item" to="/profile">
                         Profil
@@ -168,30 +164,26 @@ export default function HomePage() {
                         className="dropdown-item"
                         type="button"
                         onClick={() => {
-                          localStorage.removeItem("authToken")
-                          localStorage.removeItem("authUser")
-                          setUser(null)
+                          localStorage.removeItem("authToken");
+                          localStorage.removeItem("authUser");
+                          setUser(null);
                         }}
                       >
                         Se déconnecter
                       </button>
                     </li>
-                  </>
-                ) : (
-                  <>
-                    <li>
-                      <Link className="dropdown-item" to="/login">
-                        Se connecter
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className="dropdown-item" to="/register">
-                        Créer un compte
-                      </Link>
-                    </li>
-                  </>
-                )}
-              </ul>
+                  </ul>
+                </div>
+              ) : (
+                <>
+                  <Link className="btn btn-outline-light btn-sm" to="/login">
+                    Se connecter
+                  </Link>
+                  <Link className="btn btn-light btn-sm" to="/register">
+                    Créer un compte
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -251,7 +243,7 @@ export default function HomePage() {
 
               <div className="mt-4">
                 <a href="#missions" style={{ color: BRAND_GREEN }}>
-                  Voir les missions ↓
+                  Voir les missions &gt;
                 </a>
               </div>
             </div>
@@ -287,15 +279,15 @@ export default function HomePage() {
               </h2>
 
               <p className="text-muted fs-5 fst-italic">
-                « Chez Benevolapp, nous croyons que chaque engagement compte.
+                "Chez Benevolapp, nous croyons que chaque engagement compte.
                 Cette plateforme est née de la volonté de rapprocher les citoyens
                 des associations locales afin de favoriser une entraide durable
-                et accessible à tous. Merci pour votre engagement. »
+                et accessible à tous. Merci pour votre engagement."
               </p>
 
               <p className="fw-semibold mb-0">Jean Dupont</p>
               <p className="text-muted small">
-                Président de l’association Benevolapp
+                Président de l'association Benevolapp
               </p>
             </div>
           </div>
@@ -444,7 +436,7 @@ export default function HomePage() {
                           {opp.organization}
                         </p>
                         <p className="text-muted small mb-1">
-                          {opp.city} - {opp.date || "Date a venir"} |{" "}
+                          {opp.city} - {opp.date || "Date à venir"} |{" "}
                           {(opp.startTime || opp.time || "--") +
                             " - " +
                             (opp.endTime || opp.time || "--")}
@@ -476,3 +468,7 @@ export default function HomePage() {
     </>
   );
 }
+//github actionn ajouter build + test unitaires
+//docker + maybe host
+// pages d'admin aggreen / graphes highcharts*
+//maybe email

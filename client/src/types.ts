@@ -21,4 +21,5 @@ export interface Opportunity {
   createdBy?: string
   volunteerCount?: number
   volunteers?: User[]
+  isJoined?: boolean
 }

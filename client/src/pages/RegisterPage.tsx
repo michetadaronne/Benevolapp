@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+﻿import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import type { ChangeEvent, FormEvent } from "react";
 import logoImage from "../assets/unnamed.jpg";
-import type { User, UserRole } from "../types";
+import type { User } from "../types";
 
 const API_BASE_URL = "http://localhost:3000";
 const BRAND_GREEN = "#0b6b4c";
-const CARD_WIDTH = 440; // un tout petit peu plus étroit
+const CARD_WIDTH = 440; // un tout petit peu plus etroit
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
@@ -16,6 +16,7 @@ export default function RegisterPage() {
     password: "",
   });
   const [status, setStatus] = useState<string>("");
+  const navigate = useNavigate();
 
   function handleChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value } = e.target;
@@ -51,7 +52,7 @@ export default function RegisterPage() {
 
       localStorage.setItem("authToken", data.token);
       localStorage.setItem("authUser", JSON.stringify(data.user));
-      setStatus(`Compte créé pour ${data.user.email}`);
+      navigate("/", { replace: true });
     } catch (err) {
       console.error(err);
       setStatus("Erreur réseau");
@@ -63,7 +64,7 @@ export default function RegisterPage() {
       {/* Bouton retour */}
       <div className="position-absolute top-0 start-0 p-3">
         <Link to="/" className="text-muted small text-decoration-none">
-          ← Retour à l&apos;accueil
+          &lt; Retour à l&apos;accueil
         </Link>
       </div>
 
@@ -154,7 +155,7 @@ export default function RegisterPage() {
                 type="password"
                 name="password"
                 className="form-control form-control-lg"
-                placeholder="••••••••"
+                placeholder="********"
                 value={form.password}
                 onChange={handleChange}
                 required

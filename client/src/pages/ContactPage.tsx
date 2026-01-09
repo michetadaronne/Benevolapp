@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logoImage from "../assets/unnamed.jpg";
 
@@ -26,7 +26,7 @@ export default function ContactPage() {
 
   return (
     <div className="bg-light min-vh-100">
-      {/* NAVBAR – même que Home / About */}
+      {/* NAVBAR - même que Home / About */}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div className="container-fluid px-0">
           <div className="d-flex align-items-center">
@@ -60,10 +60,17 @@ export default function ContactPage() {
                 </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="/#missions">
+                <Link className="nav-link" to="/#missions">
                   Missions à pourvoir
-                </a>
+                </Link>
               </li>
+              {user?.role === "organizer" && (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/org">
+                    Tableau organisateur
+                  </Link>
+                </li>
+              )}
               <li className="nav-item">
                 <Link className="nav-link" to="/contact">
                   Contact
@@ -71,40 +78,18 @@ export default function ContactPage() {
               </li>
             </ul>
 
-            <div className="dropdown ms-auto me-3">
-              <button
-                className="btn btn-outline-light dropdown-toggle"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                {user ? user.email : "Mon compte"}
-              </button>
-              <ul className="dropdown-menu dropdown-menu-end">
-                {user ? (
-                  <>
-                    <li>
-                      <span className="dropdown-item-text text-muted">
-                        {user.role === "organizer" ? "Organisateur" : "Volontaire"}
-                      </span>
-                    </li>
-                    {user.role === "organizer" && (
-                      <>
-                        <li>
-                          <Link className="dropdown-item" to="/org">
-                            Tableau organisateur
-                          </Link>
-                        </li>
-                        <li>
-                          <Link className="dropdown-item" to="/org#create">
-                            Créer une mission
-                          </Link>
-                        </li>
-                        <li>
-                          <hr className="dropdown-divider" />
-                        </li>
-                      </>
-                    )}
+            <div className="ms-auto d-flex align-items-center gap-2 me-3">
+              {user ? (
+                <div className="dropdown">
+                  <button
+                    className="btn btn-outline-light dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {user.email}
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end">
                     <li>
                       <Link className="dropdown-item" to="/profile">
                         Profil
@@ -123,22 +108,18 @@ export default function ContactPage() {
                         Se déconnecter
                       </button>
                     </li>
-                  </>
-                ) : (
-                  <>
-                    <li>
-                      <Link className="dropdown-item" to="/login">
-                        Se connecter
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className="dropdown-item" to="/register">
-                        Créer un compte
-                      </Link>
-                    </li>
-                  </>
-                )}
-              </ul>
+                  </ul>
+                </div>
+              ) : (
+                <>
+                  <Link className="btn btn-outline-light btn-sm" to="/login">
+                    Se connecter
+                  </Link>
+                  <Link className="btn btn-light btn-sm" to="/register">
+                    Créer un compte
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -249,11 +230,13 @@ export default function ContactPage() {
                 <div className="card-body p-4">
                   <h2 className="h5 fw-semibold mb-3">Nos coordonnées</h2>
                   <p className="mb-2">
-                    <strong>Benevolapp – Bureau Paris</strong>
+                    <strong>Benevolapp - Bureau Paris</strong>
                   </p>
                   <p className="text-muted mb-3">
-                    15 rue de l&apos;Engagement<br />
-                    75011 Paris<br />
+                    15 rue de l&apos;Engagement
+                    <br />
+                    75011 Paris
+                    <br />
                     France
                   </p>
 
@@ -274,8 +257,8 @@ export default function ContactPage() {
                     Horaires d&apos;ouverture
                   </h3>
                   <ul className="list-unstyled text-muted small mb-0">
-                    <li>Lundi – Vendredi : 9h00 – 18h30</li>
-                    <li>Samedi : 10h00 – 13h00 (sur rendez-vous)</li>
+                    <li>Lundi - Vendredi : 9h00 - 18h30</li>
+                    <li>Samedi : 10h00 - 13h00 (sur rendez-vous)</li>
                     <li>Dimanche & jours fériés : fermé</li>
                   </ul>
                 </div>

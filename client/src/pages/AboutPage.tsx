@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logoImage from "../assets/unnamed.jpg";
 
@@ -17,6 +17,7 @@ import p12 from "../assets/propos/pexels-rdne-7464699.jpg";
 import p13 from "../assets/propos/pexels-rdne-7464729.jpg";
 import p14 from "../assets/propos/pexels-rdne-7683880.jpg";
 
+// les 2 nouvelles images (dossier assets/)
 import p15 from "../assets/pexels-pavel-danilyuk-7591300.jpg";
 import p16 from "../assets/pexels-julia-m-cameron-6995109.jpg";
 
@@ -41,34 +42,8 @@ const photos = [
   { src: p16, alt: "Atelier pédagogique avec des jeunes" },
 ];
 
-const RECAP_IMAGES = [p7, p10, p15];
-
-interface AuthUser {
-  email: string;
-  role: "organizer" | "volunteer";
-  _id: string;
-}
-
-interface PastMission {
-  _id: string;
-  title: string;
-  organization: string;
-  city: string;
-  date: string; // "YYYY-MM-DD"
-  startTime: string;
-  endTime: string;
-  description?: string;
-  categories?: string[];
-}
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:3000";
-
 export default function AboutPage() {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [pastMissions, setPastMissions] = useState<PastMission[]>([]);
-  const [loadingPast, setLoadingPast] = useState(true);
-  const [errorPast, setErrorPast] = useState<string | null>(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("authUser");
@@ -79,35 +54,11 @@ export default function AboutPage() {
         localStorage.removeItem("authUser");
       }
     }
-
-    // Charger les missions passées
-    const fetchPastMissions = async () => {
-      try {
-        setLoadingPast(true);
-        setErrorPast(null);
-
-        const res = await fetch(
-          `${API_BASE_URL}/api/opportunities/past?limit=3`
-        );
-        if (!res.ok) {
-          throw new Error("Erreur lors du chargement des missions");
-        }
-        const data: PastMission[] = await res.json();
-        setPastMissions(data);
-      } catch (err: any) {
-        console.error(err);
-        setErrorPast("Impossible de charger les missions passées pour le moment.");
-      } finally {
-        setLoadingPast(false);
-      }
-    };
-
-    fetchPastMissions();
   }, []);
 
   return (
     <div className="bg-light min-vh-100">
-      {/* NAVBAR */}
+      {/* NAVBAR - même que sur la home */}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div className="container-fluid px-0">
           <div className="d-flex align-items-center">
@@ -141,10 +92,17 @@ export default function AboutPage() {
                 </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="/#missions">
+                <Link className="nav-link" to="/#missions">
                   Missions à pourvoir
-                </a>
+                </Link>
               </li>
+              {user?.role === "organizer" && (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/org">
+                    Tableau organisateur
+                  </Link>
+                </li>
+              )}
               <li className="nav-item">
                 <Link className="nav-link" to="/contact">
                   Contact
@@ -152,39 +110,18 @@ export default function AboutPage() {
               </li>
             </ul>
 
-            <div className="dropdown ms-auto me-3">
-              <button
-                className="btn btn-outline-light dropdown-toggle"
-                type="button"
-                data-bs-toggle="dropdown"
-              >
-                {user ? user.email : "Mon compte"}
-              </button>
-              <ul className="dropdown-menu dropdown-menu-end">
-                {user ? (
-                  <>
-                    <li>
-                      <span className="dropdown-item-text text-muted">
-                        {user.role === "organizer" ? "Organisateur" : "Volontaire"}
-                      </span>
-                    </li>
-                    {user.role === "organizer" && (
-                      <>
-                        <li>
-                          <Link className="dropdown-item" to="/org">
-                            Tableau organisateur
-                          </Link>
-                        </li>
-                        <li>
-                          <Link className="dropdown-item" to="/org#create">
-                            Créer une mission
-                          </Link>
-                        </li>
-                        <li>
-                          <hr className="dropdown-divider" />
-                        </li>
-                      </>
-                    )}
+            <div className="ms-auto d-flex align-items-center gap-2 me-3">
+              {user ? (
+                <div className="dropdown">
+                  <button
+                    className="btn btn-outline-light dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {user.email}
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end">
                     <li>
                       <Link className="dropdown-item" to="/profile">
                         Profil
@@ -203,22 +140,18 @@ export default function AboutPage() {
                         Se déconnecter
                       </button>
                     </li>
-                  </>
-                ) : (
-                  <>
-                    <li>
-                      <Link className="dropdown-item" to="/login">
-                        Se connecter
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className="dropdown-item" to="/register">
-                        Créer un compte
-                      </Link>
-                    </li>
-                  </>
-                )}
-              </ul>
+                  </ul>
+                </div>
+              ) : (
+                <>
+                  <Link className="btn btn-outline-light btn-sm" to="/login">
+                    Se connecter
+                  </Link>
+                  <Link className="btn btn-light btn-sm" to="/register">
+                    Créer un compte
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -270,22 +203,22 @@ export default function AboutPage() {
                 <h2 className="h5 fw-semibold mb-3">Notre vision</h2>
                 <ul className="list-unstyled mb-0 text-muted small">
                   <li className="mb-2">
-                    <span style={{ color: BRAND_GREEN }}>✔ </span>
+                    <span style={{ color: BRAND_GREEN }}>- </span>
                     Rendre le bénévolat accessible aux étudiants, actifs,
                     familles et retraités.
                   </li>
                   <li className="mb-2">
-                    <span style={{ color: BRAND_GREEN }}>✔ </span>
+                    <span style={{ color: BRAND_GREEN }}>- </span>
                     Donner de la visibilité aux structures locales
                     (associations, collectivités, collectifs citoyens).
                   </li>
                   <li className="mb-2">
-                    <span style={{ color: BRAND_GREEN }}>✔ </span>
+                    <span style={{ color: BRAND_GREEN }}>- </span>
                     Suivre l&apos;impact : heures de bénévolat, nombre de
                     missions, types d&apos;actions.
                   </li>
                   <li>
-                    <span style={{ color: BRAND_GREEN }}>✔ </span>
+                    <span style={{ color: BRAND_GREEN }}>- </span>
                     Créer une communauté engagée autour de projets concrets et
                     utiles pour le territoire.
                   </li>
@@ -330,92 +263,6 @@ export default function AboutPage() {
                   </div>
                 </div>
               ))}
-            </div>
-          </section>
-
-          {/* SECTION BLOG / RÉCAP DES MISSIONS PASSEES */}
-          <section className="py-5 bg-white mt-5 border-top">
-            <div className="text-center mb-4">
-              <h2 className="h4 fw-semibold">Récap de nos dernières missions</h2>
-              <p className="text-muted small">
-                Un aperçu des actions menées grâce à l’engagement de nos bénévoles.
-              </p>
-            </div>
-
-            {loadingPast && (
-              <p className="text-center text-muted">Chargement des missions…</p>
-            )}
-
-            {errorPast && !loadingPast && (
-              <p className="text-center text-danger small">{errorPast}</p>
-            )}
-
-            {!loadingPast && !errorPast && pastMissions.length === 0 && (
-              <p className="text-center text-muted">
-                Aucune mission passée pour le moment. Revenez bientôt !
-              </p>
-            )}
-
-            <div className="row g-4">
-              {pastMissions.map((mission, index) => {
-                const image = RECAP_IMAGES[index % RECAP_IMAGES.length];
-                const dateLabel = mission.date
-                  ? new Date(mission.date).toLocaleDateString()
-                  : "Date à venir";
-
-                return (
-                  <div className="col-md-4" key={mission._id}>
-                    <div className="card h-100 shadow-sm border-0">
-                      <img
-                        src={image}
-                        alt={mission.title}
-                        className="card-img-top"
-                        style={{ height: 180, objectFit: "cover" }}
-                      />
-                      <div className="card-body">
-                        <h5 className="fw-semibold">{mission.title}</h5>
-
-                        <p className="text-muted small mb-1">
-                          📅 {dateLabel} — {mission.startTime}–{mission.endTime}
-                        </p>
-                        <p className="text-muted small mb-2">
-                          📍 {mission.city} — {mission.organization}
-                        </p>
-
-                        {mission.description && (
-                          <p className="text-muted small">
-                            {mission.description.length > 140
-                              ? mission.description.slice(0, 140) + "..."
-                              : mission.description}
-                          </p>
-                        )}
-
-                        <Link
-                          to={`/opportunity/${mission._id}`}
-                          className="text-decoration-none"
-                          style={{ color: BRAND_GREEN }}
-                        >
-                          Voir la mission →
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="text-center mt-5">
-              <Link
-                to="/missions"
-                className="btn btn-lg px-4"
-                style={{
-                  backgroundColor: BRAND_GREEN,
-                  color: "white",
-                  fontWeight: 600,
-                }}
-              >
-                Voir toutes les missions
-              </Link>
             </div>
           </section>
         </div>
