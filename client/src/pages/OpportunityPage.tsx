@@ -1,8 +1,8 @@
 ﻿import { useParams, Link } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import type { Opportunity, User } from "../types";
+import { API_BASE_URL } from "../lib/api";
 
-const API_BASE_URL = "http://localhost:3000";
 const BRAND_GREEN = "#0b6b4c";
 const HEADER_GRADIENT =
   "linear-gradient(135deg, #f4f7f5 0%, #ffffff 35%, #f7faf9 100%)";

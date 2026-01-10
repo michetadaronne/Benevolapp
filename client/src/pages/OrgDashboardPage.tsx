@@ -2,8 +2,7 @@
 import type { ChangeEvent, FormEvent } from "react";
 import { Link } from "react-router-dom";
 import type { Opportunity, User } from "../types";
-
-const API_BASE_URL = "http://localhost:3000";
+import { API_BASE_URL } from "../lib/api";
 
 type OpportunityForm = {
   title: string;

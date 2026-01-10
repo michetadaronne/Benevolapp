@@ -3,8 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import type { ChangeEvent, FormEvent } from "react";
 import logoImage from "../assets/unnamed.jpg";
 import type { User } from "../types";
+import { API_BASE_URL } from "../lib/api";
 
-const API_BASE_URL = "http://localhost:3000";
 const BRAND_GREEN = "#0b6b4c";
 const CARD_WIDTH = 460;
 

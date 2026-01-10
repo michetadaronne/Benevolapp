@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import logoImage from "../assets/unnamed.jpg";
 import type { Opportunity, User } from "../types";
+import { API_BASE_URL } from "../lib/api";
 //split homepage en deux pour separere les opportunites
 
 // Images du hero (slideshow)
@@ -9,7 +10,6 @@ import hero1 from "../assets/personnes-a-plan-moyen-s-embrassant.jpg";
 import hero2 from "../assets/gros-plan-de-diverses-personnes-joignant-leurs-mains.jpg";
 import hero3 from "../assets/gros-plan-des-personnes-tenant-une-boite.jpg";
 
-const API_BASE_URL = "http://localhost:3000"; //ne pas mettre le port ici
 const BRAND_GREEN = "#0b6b4c";
 
 // Liste des images du hero
