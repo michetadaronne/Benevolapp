@@ -1,5 +1,8 @@
 ﻿# Benevolapp
 
+Project from Michael Teplov, Arsene Lecoq and Martin Hasson.
+Youtube video link : https://youtu.be/B5dKukDHOBw
+
 Volunteer opportunities platform connecting organizations and volunteers.
 
 ## Stack
